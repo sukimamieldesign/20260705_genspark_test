@@ -159,7 +159,7 @@ function buildGame() {
     results.push(tracePath(start, bridges, rowCount));
   }
 
-  return { n, rowCount, bridges, prizes, players, results, done: new Array(n).fill(false), revealedAll: false };
+  return { n, rowCount, bridges, prizes, players, results, done: new Array(n).fill(false), revealed: new Array(n).fill(false), revealedAll: false };
 }
 
 /** 経路計算：[{col,row}...] のポイント列と最終到達col */
@@ -273,8 +273,8 @@ function draw(highlight = null) {
   for (let i = 0; i < n; i++) {
     const x = geo.colX(i);
     const y = geo.bottomY + 26;
-    const owner = game.results.findIndex((r, pi) => r.goal === i && game.done[pi]);
-    const show = game.revealedAll || owner >= 0;
+    // revealed[goal列] が true になるまで賞名は伏せる（演出中のネタバレ防止）
+    const show = game.revealedAll || game.revealed[i];
     cx.fillStyle = show ? "#fff3e0" : "#795548";
     roundRect(x - 26, y - 14, 52, 28, 8);
     cx.fill();
@@ -439,6 +439,9 @@ function showResult(idx) {
       modal.classList.add("fx-" + effect);
       cleanupFx = Effects.play(effect, effectLayer);
       $("result-close").classList.remove("hidden");
+      // 賞名の発表と同時にキャンバス下端のラベルも公開
+      game.revealed[game.results[idx].goal] = true;
+      draw();
     }, waitMs);
 
     $("result-close").onclick = () => {
