@@ -1,0 +1,225 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --main: #ff7043;
+  --main-dark: #e64a19;
+  --bg: #fff8f0;
+  --card: #ffffff;
+  --text: #37322e;
+  --line: #5d4037;
+}
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.screen {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+h1 {
+  text-align: center;
+  color: var(--main-dark);
+  margin-bottom: 20px;
+  font-size: 1.7rem;
+}
+
+h2 { font-size: 1.1rem; margin-bottom: 10px; color: var(--main-dark); }
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.hint { font-size: .82rem; color: #888; margin-bottom: 10px; }
+.error { color: #d32f2f; font-weight: bold; margin-top: 8px; }
+.hidden { display: none !important; }
+
+.row { display: flex; align-items: center; gap: 12px; }
+.row.wrap { flex-wrap: wrap; gap: 16px; }
+.row.center { justify-content: center; }
+.row.gap { gap: 12px; margin-top: 14px; }
+
+input[type=range] { flex: 1; accent-color: var(--main); }
+.count-badge {
+  background: var(--main); color: #fff; border-radius: 20px;
+  padding: 4px 14px; font-weight: bold; min-width: 62px; text-align: center;
+}
+
+/* 賞テーブル */
+#prize-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+#prize-table th { font-size: .8rem; color: #999; text-align: left; padding: 4px; }
+#prize-table td { padding: 4px; }
+#prize-table input[type=text] { width: 100%; }
+#prize-table input[type=number] { width: 64px; }
+
+input[type=text], input[type=number], select {
+  padding: 8px 10px; border: 2px solid #e0d5cc; border-radius: 8px;
+  font-size: .95rem; background: #fff;
+}
+input:focus, select:focus { outline: none; border-color: var(--main); }
+
+.del-btn {
+  background: #eee; border: none; border-radius: 50%;
+  width: 30px; height: 30px; cursor: pointer; font-size: .9rem;
+}
+.del-btn:hover { background: #fbc7bb; }
+
+.default-prize-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd;
+  font-size: .92rem;
+}
+.default-prize-row input { width: 110px; }
+
+.player-names { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.player-names input { width: 100%; }
+
+/* ボタン */
+.btn {
+  border: none; border-radius: 10px; cursor: pointer;
+  font-size: 1rem; font-weight: bold; padding: 12px 22px;
+  transition: transform .1s, box-shadow .1s;
+}
+.btn:active { transform: scale(.96); }
+.btn-main {
+  display: block; width: 100%; max-width: 420px; margin: 20px auto 0;
+  background: linear-gradient(135deg, var(--main), var(--main-dark));
+  color: #fff; font-size: 1.15rem; box-shadow: 0 4px 12px rgba(230,74,25,.4);
+}
+.btn-sub { background: #ffe0b2; color: #7b4a12; }
+.btn-ghost { background: transparent; color: #999; border: 2px solid #ddd; }
+
+.status { text-align: center; font-size: 1.05rem; margin-bottom: 12px; min-height: 1.5em; font-weight: bold; }
+
+#canvas-wrap { overflow-x: auto; background: var(--card); border-radius: 14px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+#amida-canvas { display: block; margin: 0 auto; touch-action: manipulation; }
+
+/* まとめ表 */
+#summary-panel { margin-top: 16px; }
+#summary-table { width: 100%; border-collapse: collapse; }
+#summary-table th, #summary-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+#summary-table tr.rank-jackpot td { background: #fff9e0; }
+#summary-table tr.rank-biglose td { background: #fdeaea; }
+
+/* ========== 結果モーダル ========== */
+.modal {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.75);
+  overflow: hidden;
+}
+#effect-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.modal-content {
+  position: relative; z-index: 10; text-align: center;
+  background: rgba(255,255,255,.95); border-radius: 20px;
+  padding: 40px 50px; max-width: 90vw;
+  box-shadow: 0 10px 40px rgba(0,0,0,.5);
+}
+.result-player { font-size: 1.2rem; color: #666; margin-bottom: 10px; }
+.result-drumroll { font-size: 1.4rem; font-weight: bold; letter-spacing: .2em; }
+.result-prize { font-size: 2.6rem; font-weight: bold; margin: 16px 0; animation: pop .5s cubic-bezier(.2,2,.4,1); }
+@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* 演出別モーダル装飾 */
+.modal.fx-jackpot .modal-content { background: linear-gradient(160deg,#fff8dc,#ffe98a); box-shadow: 0 0 60px 20px rgba(255,215,0,.8); }
+.modal.fx-jackpot .result-prize { color: #b8860b; text-shadow: 0 0 12px rgba(255,215,0,.9); }
+.modal.fx-win .result-prize { color: #e64a19; }
+.modal.fx-normal .result-prize { color: #43a047; }
+.modal.fx-lose .modal-content { background: #e8ecef; filter: saturate(.6); }
+.modal.fx-lose .result-prize { color: #607d8b; }
+.modal.fx-biglose .result-prize { color: #d32f2f; }
+
+/* シェイク（爆発用） */
+.shake { animation: shake .5s linear; }
+@keyframes shake {
+  0%,100% { transform: translate(0,0); }
+  10% { transform: translate(-12px,6px); } 20% { transform: translate(10px,-8px); }
+  30% { transform: translate(-8px,-6px); } 40% { transform: translate(12px,8px); }
+  50% { transform: translate(-10px,4px); } 60% { transform: translate(8px,-10px); }
+  70% { transform: translate(-6px,8px); } 80% { transform: translate(10px,-4px); }
+  90% { transform: translate(-4px,2px); }
+}
+
+/* ===== エフェクト部品 ===== */
+/* 紙吹雪 */
+.confetti {
+  position: absolute; top: -20px; width: 12px; height: 12px;
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  to { transform: translateY(110vh) rotate(720deg); }
+}
+
+/* 宝箱 */
+.treasure-wrap {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+}
+.treasure { font-size: 9rem; animation: treasure-in 1s cubic-bezier(.2,2,.4,1), treasure-glow 1.2s ease-in-out infinite alternate; }
+@keyframes treasure-in { from { transform: scale(0) rotate(-360deg); } to { transform: scale(1); } }
+@keyframes treasure-glow { from { filter: drop-shadow(0 0 10px gold); } to { filter: drop-shadow(0 0 45px gold); } }
+.gold-ray {
+  position: absolute; left: 50%; top: 50%; width: 6px; height: 45vmax;
+  background: linear-gradient(to top, transparent, rgba(255,215,0,.85), transparent);
+  transform-origin: center; animation: ray-spin 6s linear infinite;
+}
+@keyframes ray-spin { to { transform: rotate(360deg); } }
+.sparkle { position: absolute; font-size: 1.6rem; animation: sparkle-pop 1s ease-out forwards; }
+@keyframes sparkle-pop {
+  0% { transform: scale(0); opacity: 1; }
+  60% { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(.6); opacity: 0; }
+}
+
+/* 普通（ふわっと花） */
+.float-item { position: absolute; bottom: -40px; font-size: 1.8rem; animation: float-up linear forwards; opacity: .9; }
+@keyframes float-up { to { transform: translateY(-110vh) rotate(40deg); opacity: 0; } }
+
+/* がっかり */
+.rain-drop {
+  position: absolute; top: -30px; width: 2px; height: 22px;
+  background: rgba(140,170,200,.7); animation: rain-fall linear forwards;
+}
+@keyframes rain-fall { to { transform: translateY(115vh); } }
+.gloom-cloud { position: absolute; font-size: 4.5rem; animation: cloud-drift 4s ease-in-out infinite alternate; opacity: .9; }
+@keyframes cloud-drift { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+.sad-face { position: absolute; left: 50%; top: 16%; transform: translateX(-50%); font-size: 5rem; animation: sad-sink 2.2s ease-out forwards; }
+@keyframes sad-sink { from { transform: translateX(-50%) translateY(-30px); opacity: 0; } to { transform: translateX(-50%) translateY(16px); opacity: 1; } }
+
+/* 爆発 */
+.flash { position: absolute; inset: 0; background: #fff; animation: flash-out .45s ease-out forwards; }
+@keyframes flash-out { from { opacity: 1; } to { opacity: 0; } }
+.explosion-core {
+  position: absolute; left: 50%; top: 45%; font-size: 8rem;
+  transform: translate(-50%,-50%);
+  animation: boom-grow .6s cubic-bezier(.2,2,.4,1) forwards;
+}
+@keyframes boom-grow { from { transform: translate(-50%,-50%) scale(0); } to { transform: translate(-50%,-50%) scale(1.25); } }
+.debris { position: absolute; left: 50%; top: 45%; font-size: 1.9rem; animation: debris-fly ease-out forwards; }
+@keyframes debris-fly {
+  to { transform: translate(var(--dx), var(--dy)) rotate(720deg); opacity: 0; }
+}
+.smoke {
+  position: absolute; left: 50%; top: 45%; font-size: 3rem; opacity: 0;
+  animation: smoke-rise 2.2s ease-out forwards;
+}
+@keyframes smoke-rise {
+  0% { transform: translate(-50%,-50%) scale(.5); opacity: 0; }
+  30% { opacity: .85; }
+  100% { transform: translate(calc(-50% + var(--sx)), -220px) scale(1.7); opacity: 0; }
+}
+
+@media (max-width: 600px) {
+  .modal-content { padding: 26px 22px; }
+  .result-prize { font-size: 2rem; }
+  .treasure { font-size: 6rem; }
+}
